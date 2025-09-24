@@ -1,15 +1,35 @@
 from git import Repo
 
-inputFile = open("./Input/VR_Project_List.txt")
+print("Would you like to Clone Repos (Y/N)?")
+cloneRepoInput = input()
+
+inputFile = open("./Input/VR_Project_List_short.txt")
 lines = inputFile.readlines()
+
+if(cloneRepoInput == "Y" or cloneRepoInput == "y"):
+
+    print(f"Cloning {len(lines)} Repositories")
+    for line in lines:
+        line = line.replace("\n", "")
+        currentRepoURL = line
+        currentRepoName = currentRepoURL.split(".git")[0].split('/')[-1]
+        print(f"Cloning {currentRepoName}...")
+        try:
+            Repo.clone_from(currentRepoURL, f"./Repos/{currentRepoName}/")
+            print(f"Cloned {currentRepoName} Successfully")
+        except:
+            print(f"Error Cloning {currentRepoName}")
+
+print("Analyzing Repositories")
 
 for line in lines:
     line = line.replace("\n", "")
-    currentRepoPath = line
-    currentRepoName = currentRepoPath.split(".git")[0].split('/')[-1]
-    
+    currentRepoURL = line
+    currentRepoPath = f"./Repos/{currentRepoURL.split('.git')[0].split('/')[-1]}"
+
+    print(currentRepoPath)
     try:
-        Repo.clone_from(currentRepoPath, f"./Repos/{currentRepoName}/")
-        print(f"Cloned {currentRepoName}")
+        currentRepoLocal = Repo(f"{currentRepoPath}/")
+        print(currentRepoLocal.commit('master'))
     except:
-        print(f"{currentRepoName} Does not exist")
+        print(f"Failed to open repo")
